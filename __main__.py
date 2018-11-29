@@ -19,7 +19,12 @@ if __name__ == '__main__':
 
     def handle_ctrl_c(signal, frame):
         creep.shutdown()
-        sys.exit(0)
 
     signal.signal(signal.SIGINT, handle_ctrl_c)
-    creep.run()
+    # wait for a signal, so the main thread does not vanish (which means it
+    # would not be there anymore to react on ctrl-c)
+    try:
+        creep.run()
+    except TypeError:
+        sys.exit(1)
+    signal.pause()

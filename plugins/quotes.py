@@ -22,10 +22,8 @@ class Quotes(Plugin):
     def __init__(self, creep):
         self.admins = []
         self.bucket = boto3.resource('s3').Bucket(os.environ['S3_BUCKET_NAME'])
-        self.password = os.environ['QUOTE_DELETE_PASSWORD']
         self.cache = {}
         try:
-            raise Exception('disable memcache')
             credentials = json.loads(
                 os.environ['VCAP_SERVICES']
             )['memcachier'][0]['credentials']
@@ -115,18 +113,8 @@ class Quotes(Plugin):
             return 'no results'
 
     def dq(self, message=None, origin=None):
-        '''Delete a quote. Password required. Usage: "dq PASSWORD QUOTE_ID"'''
-        password, quote_id = message.split(' ')
-        if password == self.password:
-            quote_id = str(int(quote_id))
-            self.bucket.Object(quote_id).delete()
-            if quote_id in self.cache:
-                del self.cache[quote_id]
-            if self.memcached is not None:
-                self.memcached.delete(quote_id)
-            return 'quote %s deleted' % quote_id
-        else:
-            return 'wrong password'
+        '''Delete a quote. Only available for admins'''
+        return 'not yet implemented, bug jouke plz'
 
     def shutdown(self):
         pass
